@@ -11,35 +11,34 @@ use App\Models\AccionVehiculo;
 
 class HistorialController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
+        $title = 'Historial de Rutas';
 
-        if (in_array($user->rol, ['ADMIN', 'SOPORTE'])) {
-            $historial = Historial::with('vehiculo')->get();
+        // Validar y asignar fechas (Hoy por defecto)
+        $inicio = $request->get('fecha_inicio', now()->format('Y-m-d'));
+        $fin = $request->get('fecha_fin', now()->format('Y-m-d'));
 
-            $vehiculo = Vehicle::where('dueno_id', $user->id)
-                ->orWhereHas('usuarios', function($query) use ($user) {
-                    $query->where('user_id', $user->id);
-                })
-                ->with('estadoActual')
-                ->get();
-        } else {
-            // Usuarios normales o propietarios
-            // Si el usuario es propietario directo, usamos dueno_id
-            $vehiculo = Vehicle::where('dueno_id', $user->id)
-                ->orWhereHas('usuarios', function($query) use ($user) {
-                    $query->where('user_id', $user->id);
-                })
-                ->with('estadoActual')
-                ->get();
+        // Lógica de vehículos (ADMIN o Propios)
+        $vehiculosQuery = Vehicle::where('dueno_id', $user->id)
+            ->orWhereHas('usuarios', function($q) use ($user) {
+                $q->where('user_id', $user->id);
+            });
 
-            // Obtener historial solo de los vehículos que puede ver
-            $vehiculoIds = $vehiculo->pluck('id')->toArray();
-            $historial = Historial::whereIn('vehiculo_id', $vehiculoIds)->get();
-        }
+        $vehiculo = $vehiculosQuery->get();
+        $vehiculoIds = (in_array($user->rol, ['ADMIN', 'SOPORTE'])) 
+            ? Historial::distinct()->pluck('vehiculo_id') 
+            : $vehiculo->pluck('id');
 
-        return view('pages.page.ubicacion', compact('user', 'historial', 'vehiculo'));
+        // Filtro por rango de fechas
+        $historial = Historial::with('vehiculo')
+            ->whereIn('vehiculo_id', $vehiculoIds)
+            ->whereBetween('grabado', [$inicio . ' 00:00:00', $fin . ' 23:59:59'])
+            ->orderBy('grabado', 'asc')
+            ->get();
+
+        return view('pages.page.ubicacion', compact('user', 'historial', 'vehiculo', 'inicio', 'fin', 'title'));
     }
 
     public function accion()

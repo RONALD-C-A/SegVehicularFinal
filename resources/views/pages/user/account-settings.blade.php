@@ -104,7 +104,7 @@
                                                             <div class="col-md-6">
                                                                 <div class="form-group">
                                                                     <label for="profession">Celular</label>
-                                                                    <input name="celular" type="text" class="form-control mb-3" id="profession" placeholder="Designer" value="{{Auth::user()->celular}}">
+                                                                    <input name="celular" type="number" class="form-control mb-3" id="profession" placeholder="Designer" value="{{Auth::user()->celular}}">
                                                                 </div>
                                                             </div>
                                                             <div class="col-md-6">

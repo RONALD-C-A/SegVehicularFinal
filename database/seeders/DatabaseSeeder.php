@@ -10,22 +10,12 @@ use Carbon\Carbon;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     *
-     * @return void
-     */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
         DB::table('user')->insert([
             'email' => 'usuario@segvehicular.com',
-            'password' => Hash::make('usuario123'), // siempre hashea
+            'password' => Hash::make('usuario123'),
             'nombre' => 'Usuario Prueba',
             'celular' => '123456789',
             'direccion' => 'Calle Falsa 123',
@@ -45,7 +35,7 @@ class DatabaseSeeder extends Seeder
 
         DB::table('user')->insert([
             'email' => 'admin@segvehicular.com',
-            'password' => Hash::make('admin123'), // siempre hashea
+            'password' => Hash::make('admin123'),
             'nombre' => 'Administrador',
             'celular' => '123456789',
             'direccion' => 'Calle Falsa 123',

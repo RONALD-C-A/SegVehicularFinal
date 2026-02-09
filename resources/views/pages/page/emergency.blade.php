@@ -78,14 +78,17 @@
                                                         </div>
                                                         <div class="col-md-6 mb-3">
                                                             <input type="text" id="nombre" name="nombre" class="form-control" placeholder="Nombre completo *">
+                                                            <span id="errorNombre"></span>
                                                         </div>
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-md-6 mb-3">
                                                             <input type="text" id="celular" name="celular" class="form-control" placeholder="Nro. Celular *">
+                                                            <span id="errorCelular"></span>
                                                         </div>
                                                         <div class="col-md-6 mb-3">
                                                             <input type="text" id="email" name="email" class="form-control" placeholder="Correo">
+                                                            <span id="errorEmail"></span>
                                                         </div>
                                                     </div>
                                                     <div class="row">
@@ -105,7 +108,8 @@
                                                             </select>
                                                         </div>
                                                         <div class="col-md-4 mb-3">
-                                                            <input type="text" id="parentezco" name="parentezco" class="form-control" placeholder="Parentezco">
+                                                            <input type="text" id="parentezco" name="parentezco" class="form-control" placeholder="Parentesco">
+                                                            <span id="errorParentesco"></span>
                                                         </div>
                                                     </div>
                                                 </form>
@@ -300,6 +304,44 @@
                         console.error(err);
                         toastr.error('Ocurrió un error al procesar la solicitud');
                     });
+                }
+            });
+        </script>
+
+        <script>
+            document.getElementById('nombre').addEventListener('keypress', function (e){
+                const pattern = /^[a-zA-Z\s]*$/;
+                const errorNombre = document.getElementById('errorNombre');
+                const errorEmail = document.getElementById('errorEmail');
+
+                if(!pattern.test(e.key)){
+                    e.preventDefault();
+                    errorNombre.textContent='Solo se permiten letras';
+                    errorNombre.style.color='red';
+                }else{
+                    errorNombre.textContent='';
+                }
+            });
+            document.getElementById('celular').addEventListener('keypress', function (e){
+                const pattern = /^[0-9]*$/;
+                const errorCelular = document.getElementById('errorCelular');
+                if(!pattern.test(e.key)){
+                    e.preventDefault();
+                    errorCelular.textContent='Solo se permite números';
+                    errorCelular.style.color='red';
+                }else{
+                    errorCelular.textContent='';
+                }
+            });
+            document.getElementById('parentezco').addEventListener('keypress', function (e){
+                const pattern = /^[a-zA-Z\s]*$/;
+                const errorParentesco = document.getElementById('errorParentesco');
+                if(!pattern.test(e.key)){
+                    e.preventDefault();
+                    errorParentesco.textContent='Solo letras';
+                    errorParentesco.style.color='red';
+                }else{
+                    errorParentesco.textContent='';
                 }
             });
         </script>

@@ -145,7 +145,8 @@
                                                             </select>
                                                         </div>
                                                         <div class="col-md-6 mb-3">
-                                                            <input type="text" id="ano" name="ano" class="form-control" placeholder="Año">
+                                                            <input type="text" id="ano" name="ano" class="form-control" placeholder="Año" maxlength="4">
+                                                            <span id="anoError"></span>
                                                         </div>
                                                     </div>
                                                     <div class="row">
@@ -313,7 +314,6 @@
                     });
                 });
 
-                // 🧩 Validación de campos obligatorios antes de enviar
                 form.addEventListener('submit', function(e) {
                     const nroPlaca = document.getElementById('nro_placa').value.trim();
                     const dispositivo = document.getElementById('dispositivo_id').value.trim();
@@ -323,12 +323,11 @@
                     const modelo = document.getElementById('modelo').value.trim();
 
                     if (!nroPlaca || !dispositivo || !dueno || !ano || !marca || !modelo) {
-                        e.preventDefault(); // ❌ Evita que el formulario se envíe
+                        e.preventDefault();
                         toastr.warning('Por favor completa todos los campos obligatorios.');
                     }
                 });
 
-                // BOTONES ACTIVAR/DESACTIVAR
                 document.querySelectorAll('.btn-toggle').forEach(button => {
                     button.addEventListener('click', function () {
                         const id = this.dataset.id;
@@ -355,6 +354,18 @@
                 });
             });
 
+        </script>
+
+        <script>
+            document.getElementById('ano').addEventListener('keypress', function (e){
+                const anioError = document.getElementById('anoError');
+                const pattern = /^[0-9]*$/;
+                if(!pattern.test(e.key)){
+                    e.preventDefault();
+                    anioError.textContent="No se permiten letras";
+                    anioError.style.color="red";
+                }
+            });
         </script>
 
 

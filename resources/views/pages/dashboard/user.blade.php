@@ -66,19 +66,16 @@
                 <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12 layout-spacing">
                     <div class="widget widget-one_hybrid widget-engagement">
                         <div class="widget-heading">
-                            <div class="w-title" style="display: flex; align-items: center; justify-content: space-between;">
-                                <div class="d-flex align-items-center">
-                                    <div class="w-icon">
+                            <div class="w-title d-flex align-items-center justify-content-between w-100">
+                                <div class="d-flex align-items-center" style="min-width: 0;"> <div class="w-icon">
                                         <i class="feather feather-thermometer"></i>
                                     </div>
-                                    <div>
-                                        <p class="w-value" id="manilla">-</p>
-                                        <h5>Manilla</h5>
+                                    <div class="ms-2 text-truncate"> <p class="w-value mb-0" id="manilla">-</p>
+                                        <h5 class="mb-0">Manilla</h5>
                                     </div>
                                 </div>
-                            <div id="manilla-buttons">
-                                <!-- Botón será inyectado por JS -->
-                            </div>
+                                <div id="manilla-buttons" class="ms-2 flex-shrink-0">
+                                    </div>
                             </div>
                         </div>
                     </div>
@@ -211,36 +208,38 @@
                 }
 
                 async function actualizarBotonManillaVehiculo(vehiculo_id) {
+                    const contenedor = document.getElementById('manilla-buttons');
+                    if (!contenedor) {
+                        console.error("No se encontró el contenedor #manilla-buttons");
+                        return;
+                    }
+
                     try {
                         const res = await fetch(`/api/vehiculo/${vehiculo_id}/ultimo-estado-manilla`);
-                        if (!res.ok) throw new Error('Error obteniendo estado');
                         const data = await res.json();
                         const estado = data?.estado ?? 0;
 
-                        const contenedor = document.getElementById('manilla-buttons');
                         contenedor.innerHTML = '';
-
                         const boton = document.createElement('button');
+                        
+                        // Asignar clases y texto según estado
                         if (estado == 1) {
-                            boton.className = 'btn btn-danger';
+                            boton.className = 'btn btn-danger btn-sm';
                             boton.textContent = 'Desactivar';
                             boton.onclick = () => enviarAccion('bloqueo', 0, vehiculo_id);
                         } else {
-                            boton.className = 'btn btn-success';
+                            boton.className = 'btn btn-success btn-sm';
                             boton.textContent = 'Activar';
                             boton.onclick = () => enviarAccion('bloqueo', 1, vehiculo_id);
                         }
 
                         contenedor.appendChild(boton);
                     } catch (err) {
-                        console.error('Error obteniendo estado manilla:', err);
+                        console.error('Error en fetch:', err);
+                        contenedor.innerHTML = '<span class="badge badge-warning">Sin red</span>';
                     }
                 }
-
-                // Inicializa con el primer vehículo
                 if (vehiculos.length > 0) actualizarDatos(vehiculos[0]);
-
-                // Cambio de vehículo en el select
                 const select = document.getElementById('vehiculoSelect');
                 if (select) {
                     select.addEventListener('change', e => {
@@ -249,7 +248,6 @@
                     });
                 }
 
-                // Actualización periódica
                 setInterval(async () => {
                     try {
                         const res = await fetch("{{ route('vehiculos.estados.actualizados') }}");
@@ -268,8 +266,6 @@
             });
         </script>
 
-
-        
         {{-- Analytics --}}
         @vite(['resources/assets/js/widgets/_wSix.js'])
         @vite(['resources/assets/js/widgets/_wChartThree.js'])
